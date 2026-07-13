@@ -4,8 +4,8 @@ from dateutil import parser
 def clean_prefix(text):
     if not text:
         return text
-    # Strip common filler prefix words like "my ", "a ", "an ", "the ", "in ", "at ", "from "
-    clean = re.sub(r'^(?:my|a|an|the|in|at|from)\s+', '', text, flags=re.IGNORECASE)
+    # Strip common filler prefix words
+    clean = re.sub(r'^(?:my|a|an|the|in|at|from|to|is|was|am|joining)\s+', '', text, flags=re.IGNORECASE)
     return clean.strip()
 
 def extract_details(text):
@@ -21,13 +21,12 @@ def extract_details(text):
         "branch_depot": None
     }
     
-    # Split text into sentences/clauses
-    clauses = re.split(r'[\n\r\t]+|\s+\band\b\s+|\.\s+', text)
+    text_clean = text.replace('\r', '\n')
+    clauses = re.split(r'[\n\t\.]+|\s+\band\b\s+', text_clean)
     clauses = [c.strip() for c in clauses if c.strip()]
     
     # 1. Extract Qualification
     for clause in clauses:
-        # Match "completed B.Tech", "Qualification BE", "qualification: BE", etc.
         q_match = re.search(
             r"(?:completed|did|have|degree in|graduation in|studied|studied in|qualification is|qualification\s*\:|qual\s*\:|qual\b|qualification\b|degree\s*\:|degree\b|education\s*\:|education\b)\s+([a-zA-Z0-9\.\s\-\(\)\/]{2,30})",
             clause,
@@ -37,7 +36,6 @@ def extract_details(text):
             data["qualification"] = clean_prefix(q_match.group(1))
             break
             
-        # Match direct standalone degree mention
         q_direct = re.search(
             r"\b(b\.?tech|m\.?tech|b\.?e|m\.?ca|b\.?sc|b\.?ca|ph\.?d|m\.?ba|graduation|post\s*-?\s*graduation|bachelor|master|diploma)\b\s*([a-zA-Z0-9\s\-\(\)\/]*)",
             clause,
@@ -49,7 +47,6 @@ def extract_details(text):
 
     # 2. Extract Location
     for clause in clauses:
-        # Match "live in Pune", "Location Pune", "location: Pune", etc.
         l_match = re.search(
             r"(?:live in|located in|based in|from|at|location is|living in|residing in|staying in|location\s*\:|loc\s*\:|loc\b|location\b|city\s*\:|city\b|place\s*\:|place\b)\s+([a-zA-Z\s]{2,25})",
             clause,
@@ -61,7 +58,6 @@ def extract_details(text):
 
     # 3. Extract DOB
     for clause in clauses:
-        # Match "DOB 12 March 2003", "Date of birth 3/10/2004", "dob: 29/9/2003", etc.
         d_match = re.search(
             r"(?:dob is|born on|date of birth is|birth date is|birthdate is|dob:?|date of birth:?|dob\s*\:|date of birth\s*\:|dob|date of birth|birthdate|birth date|bday|b-day|bdate|bday\s*\:|bdate\s*\:)\s+([a-zA-Z0-9\s\,\-\/]+)",
             clause,
@@ -76,7 +72,6 @@ def extract_details(text):
             except:
                 pass
                 
-        # Fallback: scan for any standalone date format (e.g. 29/9/2003)
         d_standalone = re.search(
             r"\b(\d{1,2}\s+[a-zA-Z]{3,9}\s+\d{4}|[a-zA-Z]{3,9}\s+\d{1,2}\,\s+\d{4}|\d{1,2}[\-\/\.]\d{1,2}[\-\/\.]\d{4}|\d{4}[\-\/\.]\d{1,2}[\-\/\.]\d{1,2})\b",
             clause
@@ -89,77 +84,70 @@ def extract_details(text):
             except:
                 pass
 
-    # 4. Extract Gender
-    for clause in clauses:
-        g_match = re.search(
-            r"(?:gender is|gender\s*\:|gender)\s+(male|female|other|m|f)\b",
-            clause,
-            re.IGNORECASE
-        )
-        if g_match:
-            g_val = g_match.group(1).strip().capitalize()
-            if g_val == "M":
-                g_val = "Male"
-            elif g_val == "F":
-                g_val = "Female"
-            data["gender"] = g_val
-            break
+    # 4. Extract Gender (Scan closed set)
+    gender_lower = text.lower()
+    if "female" in gender_lower:
+        data["gender"] = "Female"
+    elif "male" in gender_lower:
+        data["gender"] = "Male"
+    elif "other" in gender_lower:
+        data["gender"] = "Other"
 
-    # 5. Extract Mobile Number
-    for clause in clauses:
-        if "alternate" in clause.lower() or "alt" in clause.lower():
-            continue
-        mob_match = re.search(
-            r"(?:mobile number is|contact number is|phone number is|mobile number\s*\:|mobile\s*\:|contact\s*\:|phone\s*\:|mobile|contact|phone)\s+(\+?\d[\d\-\s]{8,15}\d)",
-            clause,
-            re.IGNORECASE
-        )
-        if mob_match:
-            data["mobile_number"] = mob_match.group(1).strip()
-            break
+    # 5 & 6. Extract Mobile Numbers (Smart phone-like pattern scanning)
+    phone_matches = re.findall(r"\b(\+?\d[\d\s\-]{8,14}\d)\b", text)
+    cleaned_phones = []
+    for p in phone_matches:
+        c = re.sub(r'[\s\-]', '', p)
+        if len(c) >= 10:  # Validate length
+            cleaned_phones.append(p.strip())
+            
+    if cleaned_phones:
+        if len(cleaned_phones) >= 2:
+            data["mobile_number"] = cleaned_phones[0]
+            data["alternate_mobile"] = cleaned_phones[1]
+        else:
+            data["mobile_number"] = cleaned_phones[0]
 
-    # 6. Extract Alternate Mobile Number
-    for clause in clauses:
-        alt_match = re.search(
-            r"(?:alternate mobile number is|alternate mobile is|alt mobile is|alt contact is|alternate mobile\s*\:|alt mobile\s*\:|alternate contact\s*\:|alternate phone\s*\:|alt\s+contact\s*\:|alt\s+mobile\s*\:)\s+(\+?\d[\d\-\s]{8,15}\d)",
-            clause,
-            re.IGNORECASE
-        )
-        if alt_match:
-            data["alternate_mobile"] = alt_match.group(1).strip()
-            break
+    # 7. Extract Marital Status (Scan closed set)
+    status_lower = text.lower()
+    if "single" in status_lower:
+        data["marital_status"] = "Single"
+    elif "married" in status_lower:
+        data["marital_status"] = "Married"
+    elif "divorced" in status_lower:
+        data["marital_status"] = "Divorced"
+    elif "widow" in status_lower:
+        data["marital_status"] = "Widow"
 
-    # 7. Extract Marital Status
-    for clause in clauses:
-        m_match = re.search(
-            r"(?:marital status is|marital status\s*\:|marital status|marital\s+status|marital|status)\s+(single|married|divorced|widow)\b",
-            clause,
-            re.IGNORECASE
-        )
-        if m_match:
-            data["marital_status"] = m_match.group(1).strip().capitalize()
-            break
+    # 8. Extract Blood Group (Scan closed set patterns)
+    bg_match = re.search(r"\b(A\+|A\-|B\+|B\-|AB\+|AB\-|O\+|O\-)\b", text, re.IGNORECASE)
+    if bg_match:
+        data["blood_group"] = bg_match.group(1).upper()
 
-    # 8. Extract Blood Group
+    # 9. Extract Branch / Depot (Supports both label-first and value-first formats)
     for clause in clauses:
-        b_match = re.search(
-            r"(?:blood group is|blood group\s*\:|blood\s*\:|blood group|blood)\s+(A\+|A\-|B\+|B\-|AB\+|AB\-|O\+|O\-)",
+        # A. Label-first: "branch: Bhekarainagar"
+        br_match1 = re.search(
+            r"(?:branch depot|branch / depot|branch|depot)\s+(?:is|at|to|:\s*)\s*([a-zA-Z0-9\s]{2,25})",
             clause,
             re.IGNORECASE
         )
-        if b_match:
-            data["blood_group"] = b_match.group(1).strip().upper()
+        if br_match1:
+            val = br_match1.group(1).strip()
+            val = re.sub(r'\b(?:office|location|depot|branch)\b.*', '', val, flags=re.IGNORECASE).strip()
+            data["branch_depot"] = clean_prefix(val)
             break
-
-    # 9. Extract Branch / Depot
-    for clause in clauses:
-        br_match = re.search(
-            r"(?:branch depot is|branch / depot is|branch is|depot is|branch\s*\:|depot\s*\:|branch / depot\s*\:|branch depot\s*\:|branch depot|branch|depot)\s+([a-zA-Z0-9\s]{2,30})",
+            
+        # B. Value-first: "Bhekarainagar branch"
+        br_match2 = re.search(
+            r"\b([a-zA-Z0-9\s]{2,25})\s+(?:branch|depot)\b",
             clause,
             re.IGNORECASE
         )
-        if br_match:
-            data["branch_depot"] = clean_prefix(br_match.group(1))
+        if br_match2:
+            val = br_match2.group(1).strip()
+            val = re.sub(r'.*\b(?:joining|at|the)\s+', '', val, flags=re.IGNORECASE).strip()
+            data["branch_depot"] = clean_prefix(val)
             break
 
     return data
