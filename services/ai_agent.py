@@ -88,11 +88,16 @@ def extract_employee_info_fallback(email_text):
     question = None
     email_lower = email_text.lower()
     
-    question_triggers = ["documents", "docs", "joining details", "dress", "timings", "hybrid", "working hours", "where", "location", "address", "metro"]
-    for trigger in question_triggers:
-        if trigger in email_lower:
-            question = f"What are the details regarding {trigger}?"
-            break
+    # Only detect a question if the email contains a question mark or a question phrase
+    has_question = '?' in email_text or any(q in email_lower for q in ['what is', 'what are', 'when is', 'where is', 'how to', 'which documents', 'dress code'])
+    
+    if has_question:
+        question_triggers = ["documents", "docs", "joining details", "dress", "timings", "hybrid", "working hours", "where", "location", "address", "metro"]
+        for trigger in question_triggers:
+            if trigger in email_lower:
+                question = f"What are the details regarding {trigger}?"
+                break
+
             
     # Format dob to string if it was parsed as date
     dob_str = None
