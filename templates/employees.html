@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - OnboardAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                </div>
+                <span class="brand-name">OnboardAI</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <li class="nav-item active">
+                    <a href="{{ url_for('employee.employees') }}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Employees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('employee.add_employee') }}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <line x1="19" y1="8" x2="19" y2="14"></line>
+                            <line x1="16" y1="11" x2="22" y2="11"></line>
+                        </svg>
+                        Add Employee
+                    </a>
+                </li>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>OnboardAI Agent v1.0.0</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Pane -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Employees Directory</h1>
+                    <p class="page-subtitle">Manage candidate onboarding progress, AI thread interactions, and details.</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="{{ url_for('employee.sync') }}" class="btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        Sync Inbox
+                    </a>
+                    <a href="{{ url_for('employee.add_employee') }}" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Employee
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Widgets -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">Total Employees</span>
+                        <span class="stat-value">{{ stats.total }}</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-value text-success">{{ stats.completed }}</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">In Progress</span>
+                        <span class="stat-value text-warning">{{ stats.in_progress }}</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">Pending Response</span>
+                        <span class="stat-value" style="color: var(--pending)">{{ stats.pending }}</span>
+                    </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(107, 114, 128, 0.15); color: var(--pending)">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees List Card -->
+            <div class="card-panel">
+                <div class="table-container">
+                    {% if employees %}
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Onboarding Details</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emp in employees %}
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600; color: #fff;">{{ emp.name }}</div>
+                                </td>
+                                <td>
+                                    <div style="color: var(--text-muted); font-size: 0.85rem;">{{ emp.email }}</div>
+                                </td>
+                                <td>
+                                    <div style="font-size: 0.8rem; line-height: 1.4;">
+                                        <div><strong>Qual:</strong> {{ emp.qualification }}</div>
+                                        <div><strong>DOB:</strong> {{ emp.dob }}</div>
+                                        <div><strong>Loc:</strong> {{ emp.location }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if emp.status == 'Completed' %}
+                                    <span class="badge badge-completed">Completed</span>
+                                    {% elif emp.status == 'In Progress' %}
+                                    <span class="badge badge-in_progress">In Progress</span>
+                                    {% else %}
+                                    <span class="badge badge-pending">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-track">
+                                            <div class="progress-fill" style="width: {{ emp.progress }}%;"></div>
+                                        </div>
+                                        <span class="progress-text">{{ emp.progress }}%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="{{ url_for('employee.view_thread', emp_id=emp.id) }}" class="btn btn-secondary btn-sm" title="View email conversation thread">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            Thread
+                                        </a>
+                                        <a href="{{ url_for('employee.edit_employee', emp_id=emp.id) }}" class="btn btn-secondary btn-sm" title="Edit employee details manually">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                            Edit
+                                        </a>
+                                        <a href="{{ url_for('employee.delete_employee', emp_id=emp.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this employee?');" title="Remove employee from system">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                            </svg>
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; color: var(--text-dim);">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        <p style="font-weight: 500; font-size: 1.1rem; color: #fff;">No employees added yet</p>
+                        <p style="font-size: 0.85rem; margin-top: 0.25rem;">Add employees to automatically trigger their onboarding sequence.</p>
+                        <a href="{{ url_for('employee.add_employee') }}" class="btn btn-primary" style="margin-top: 1.5rem;">Add New Employee</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
