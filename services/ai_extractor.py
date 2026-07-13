@@ -65,7 +65,7 @@ def extract_details(text):
             dob_str = d_match.group(1).strip()
             try:
                 parsed_date = parser.parse(dob_str, fuzzy=True)
-                data["dob"] = parsed_date.date()
+                data["dob"] = parsed_date.strftime("%Y-%m-%d")
                 break
             except:
                 pass
@@ -78,9 +78,10 @@ def extract_details(text):
         if d_standalone:
             try:
                 parsed_date = parser.parse(d_standalone.group(1), fuzzy=True)
-                data["dob"] = parsed_date.date()
+                data["dob"] = parsed_date.strftime("%Y-%m-%d")
                 break
             except:
                 pass
+
 
     return data

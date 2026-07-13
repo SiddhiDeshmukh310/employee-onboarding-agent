@@ -26,10 +26,29 @@ def clean_json_response(text):
         text = "\n".join(lines).strip()
     return text
 
+import re
+
+def strip_quoted_text(text):
+    if not text:
+        return ""
+    # Split by common headers indicating quoted reply history
+    # 1. "On ... wrote:"
+    text = re.split(r'On\s+[A-Za-z0-9,:\s\-\+\#\.\/]+\s+wrote:', text, flags=re.IGNORECASE)[0]
+    # 2. "-----Original Message-----"
+    text = re.split(r'-----Original Message-----', text, flags=re.IGNORECASE)[0]
+    # 3. "From:" (common in forward/reply chains)
+    text = re.split(r'From\:\s+', text, flags=re.IGNORECASE)[0]
+    # 4. Remove lines starting with ">"
+    lines = text.split('\n')
+    clean_lines = [line for line in lines if not line.strip().startswith('>')]
+    return '\n'.join(clean_lines).strip()
+
 def extract_employee_info(email_text):
+    email_text = strip_quoted_text(email_text)
     if not model:
         print("[AI Agent] No Gemini API key configured. Using local fallback extraction.")
         return extract_employee_info_fallback(email_text)
+
 
     prompt = f"""
     You are an HR onboarding AI.
