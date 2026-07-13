@@ -21,9 +21,9 @@ def extract_details(text):
     
     # 1. Extract Qualification
     for clause in clauses:
-        # Match "completed B.Tech", "Qualification BE", "qualification: BE"
+        # Match "completed B.Tech", "Qualification BE", "qualification: BE", "qual: BE", "degree: BE", etc.
         q_match = re.search(
-            r"(?:completed|did|have|degree in|graduation in|studied|studied in|qualification is|qualification\s*\:|qualification)\s+([a-zA-Z0-9\.\s\-\(\)\/]{2,30})",
+            r"(?:completed|did|have|degree in|graduation in|studied|studied in|qualification is|qualification\s*\:|qual\s*\:|qual\b|qualification\b|degree\s*\:|degree\b|education\s*\:|education\b)\s+([a-zA-Z0-9\.\s\-\(\)\/]{2,30})",
             clause,
             re.IGNORECASE
         )
@@ -43,9 +43,9 @@ def extract_details(text):
 
     # 2. Extract Location
     for clause in clauses:
-        # Match "live in Pune", "Location Pune", "location: Pune"
+        # Match "live in Pune", "Location Pune", "location: Pune", "loc Pune", "city Pune", "residing in Pune", etc.
         l_match = re.search(
-            r"(?:live in|located in|based in|from|at|location is|living in|location\s*\:|location)\s+([a-zA-Z\s]{2,25})",
+            r"(?:live in|located in|based in|from|at|location is|living in|residing in|staying in|location\s*\:|loc\s*\:|loc\b|location\b|city\s*\:|city\b|place\s*\:|place\b)\s+([a-zA-Z\s]{2,25})",
             clause,
             re.IGNORECASE
         )
@@ -55,9 +55,9 @@ def extract_details(text):
 
     # 3. Extract DOB
     for clause in clauses:
-        # Match "DOB 12 March 2003", "Date of birth 3/10/2004", "DOB: 29/9/2003"
+        # Match "DOB 12 March 2003", "Date of birth 3/10/2004", "dob: 29/9/2003", "bday: ...", "bdate: ...", "born on ..."
         d_match = re.search(
-            r"(?:dob is|born on|date of birth is|birth date is|birthdate is|dob:?|date of birth:?|dob\s*\:|date of birth\s*\:|dob|date of birth)\s+([a-zA-Z0-9\s\,\-\/]+)",
+            r"(?:dob is|born on|date of birth is|birth date is|birthdate is|dob:?|date of birth:?|dob\s*\:|date of birth\s*\:|dob|date of birth|birthdate|birth date|bday|b-day|bdate|bday\s*\:|bdate\s*\:)\s+([a-zA-Z0-9\s\,\-\/]+)",
             clause,
             re.IGNORECASE
         )
