@@ -133,7 +133,7 @@ def generate_onboarding_response(employee, missing_fields, employee_question):
     
     Rules:
     1. Answer the employee's question accurately using ONLY the provided Predefined Company Knowledge Base. If the question is not answered in the Knowledge Base, reply politely that you will consult with the HR team and get back to them.
-    2. If there are missing fields, politely ask the employee to reply with them in the same thread.
+    2. If there are missing fields, politely ask the employee to reply with them in the same thread. Specifically, if Date of Birth is missing, ask for it in the format: DD/MM/YYYY.
     3. If all fields are complete (no missing fields), congratulate the employee and confirm that their onboarding is complete.
     4. Sign off professionally as the HR Onboarding Team.
     """
@@ -161,7 +161,10 @@ def generate_onboarding_response_fallback(employee, missing_fields, employee_que
     if missing_fields:
         body += "To complete your onboarding process, we still require the following information:\n"
         for field in missing_fields:
-            body += f"- {field}\n"
+            if field == "Date of Birth":
+                body += f"- {field} (e.g., DD/MM/YYYY)\n"
+            else:
+                body += f"- {field}\n"
         body += "\nPlease reply directly to this email with these details."
     else:
         body += "Thank you for providing all the required information! Your onboarding process is now complete. We look forward to welcoming you to the company!"

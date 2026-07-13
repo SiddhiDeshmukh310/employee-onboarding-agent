@@ -25,7 +25,10 @@ We still need the following information:
 """
 
     for field in missing:
-        body += f"- {field}\n"
+        if field == "Date of Birth":
+            body += f"- {field} (e.g., DD/MM/YYYY)\n"
+        else:
+            body += f"- {field}\n"
 
     body += """
 Please reply directly to this email with your missing details.
