@@ -4,12 +4,22 @@ class Employee(db.Model):
     __tablename__ = "employees"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(150))
+    first_name = db.Column(db.String(100), nullable=False)
+    middle_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    gender = db.Column(db.String(20))
     email = db.Column(db.String(100), unique=True, nullable=False)
     qualification = db.Column(db.String(200))
     dob = db.Column(db.Date)
+    mobile_number = db.Column(db.String(20))
+    alternate_mobile = db.Column(db.String(20))
+    marital_status = db.Column(db.String(20))
+    blood_group = db.Column(db.String(10))
+    branch_depot = db.Column(db.String(100))
     location = db.Column(db.String(100))
     status = db.Column(db.String(50), default="Pending")
+
 
 class EmailMessage(db.Model):
     __tablename__ = "email_messages"

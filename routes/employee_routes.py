@@ -33,7 +33,10 @@ def employees():
         enriched.append({
             "id": emp.id,
             "name": emp.name,
+            "first_name": emp.first_name or emp.name,
             "email": emp.email,
+            "mobile_number": emp.mobile_number or "-",
+            "branch_depot": emp.branch_depot or "-",
             "qualification": emp.qualification or "-",
             "dob": emp.dob.strftime("%Y-%m-%d") if emp.dob else "-",
             "location": emp.location or "-",
@@ -56,18 +59,46 @@ def employees():
 @employee_bp.route("/add", methods=["GET", "POST"])
 def add_employee():
     if request.method == "POST":
-        name = request.form["name"]
+        first_name = request.form["first_name"]
+        middle_name = request.form.get("middle_name") or ""
+        last_name = request.form.get("last_name") or ""
+        gender = request.form.get("gender") or ""
         email_addr = request.form["email"]
+        mobile_number = request.form.get("mobile_number") or ""
+        alternate_mobile = request.form.get("alternate_mobile") or ""
+        marital_status = request.form.get("marital_status") or ""
+        blood_group = request.form.get("blood_group") or ""
+        branch_depot = request.form.get("branch_depot") or ""
 
         # Check if email already exists
         exists = Employee.query.filter_by(email=email_addr).first()
         if exists:
-            # Simple error message rendering can be handled via template alert
             return render_template("add_employee.html", error="Employee with this email already exists.")
 
+        dob_val = None
+        dob_input = request.form.get("dob")
+        if dob_input:
+            try:
+                dob_val = datetime.strptime(dob_input, "%Y-%m-%d").date()
+            except:
+                try:
+                    dob_val = datetime.strptime(dob_input, "%d-%m-%Y").date()
+                except:
+                    pass
+
         emp = Employee(
-            name=name,
+            first_name=first_name,
+            middle_name=middle_name,
+            last_name=last_name,
+            gender=gender,
+            name=f"{first_name} {middle_name or ''} {last_name or ''}".strip(),
             email=email_addr,
+            dob=dob_val,
+            mobile_number=mobile_number,
+            alternate_mobile=alternate_mobile,
+            marital_status=marital_status,
+            blood_group=blood_group,
+            branch_depot=branch_depot,
             status="Pending"
         )
 
@@ -78,15 +109,9 @@ def add_employee():
         body = create_onboarding_email(emp)
         
         try:
-            # Send initial email and capture message_id
-            msg_id = send_email(
-                emp.email,
-                f"Onboarding Invitation - Action Required: {emp.name}",
-                body
-            )
-            
-            # Save the outgoing invitation email to the thread logs
-            msg = EmailMessage(
+            msg_id = send_email(emp.email, f"Onboarding Invitation - Action Required: {emp.name}", body)
+            # Log outgoing invitation in the email_messages table
+            invitation_msg = EmailMessage(
                 employee_id=emp.id,
                 sender=os.getenv("EMAIL_USER", "HR Agent"),
                 receiver=emp.email,
@@ -94,9 +119,8 @@ def add_employee():
                 body=body,
                 message_id=msg_id
             )
-            db.session.add(msg)
+            db.session.add(invitation_msg)
             db.session.commit()
-
         except Exception as e:
             print(f"Error sending/logging initial email: {e}")
 
@@ -109,20 +133,32 @@ def edit_employee(emp_id):
     emp = Employee.query.get_or_404(emp_id)
     
     if request.method == "POST":
-        emp.name = request.form["name"]
+        emp.first_name = request.form["first_name"]
+        emp.middle_name = request.form.get("middle_name") or ""
+        emp.last_name = request.form.get("last_name") or ""
+        emp.gender = request.form.get("gender") or ""
         emp.email = request.form["email"]
-        emp.qualification = request.form["qualification"] or None
+        emp.name = f"{emp.first_name} {emp.middle_name or ''} {emp.last_name or ''}".strip()
+        emp.qualification = request.form.get("qualification") or None
         
-        dob_val = request.form["dob"]
+        dob_val = request.form.get("dob")
         if dob_val:
             try:
                 emp.dob = datetime.strptime(dob_val, "%Y-%m-%d").date()
             except:
-                pass
+                try:
+                    emp.dob = datetime.strptime(dob_val, "%d-%m-%Y").date()
+                except:
+                    pass
         else:
             emp.dob = None
             
-        emp.location = request.form["location"] or None
+        emp.mobile_number = request.form.get("mobile_number") or ""
+        emp.alternate_mobile = request.form.get("alternate_mobile") or ""
+        emp.marital_status = request.form.get("marital_status") or ""
+        emp.blood_group = request.form.get("blood_group") or ""
+        emp.branch_depot = request.form.get("branch_depot") or ""
+        emp.location = request.form.get("location") or None
         
         # Recheck status based on fields
         missing = get_missing_fields(emp)
@@ -247,4 +283,20 @@ def simulate_reply(emp_id):
     db.session.commit()
     
     return redirect(url_for("employee.view_thread", emp_id=emp.id))
+
+@employee_bp.route("/employee/<int:emp_id>/view")
+def view_employee(emp_id):
+    emp = Employee.query.get_or_404(emp_id)
+    dob_str = emp.dob.strftime("%d-%m-%Y") if emp.dob else "-"
+    return render_template("view_employee.html", employee=emp, dob_str=dob_str)
+
+@employee_bp.route("/init-db")
+def init_db():
+    print("[DB Init] Dropping all tables...")
+    db.drop_all()
+    print("[DB Init] Creating all tables...")
+    db.create_all()
+    print("[DB Init] Database initialized successfully!")
+    return "Database initialized successfully! Go back to <a href='/'>Dashboard</a>."
+
 

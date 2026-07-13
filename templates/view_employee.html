@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Employee - OnboardAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                </div>
+                <span class="brand-name">OnboardAI</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <li class="nav-item">
+                    <a href="{{ url_for('employee.employees') }}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Employees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('employee.add_employee') }}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <line x1="19" y1="8" x2="19" y2="14"></line>
+                            <line x1="16" y1="11" x2="22" y2="11"></line>
+                        </svg>
+                        Add Employee
+                    </a>
+                </li>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>OnboardAI Agent v1.0.0</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">View Employee Details</h1>
+                    <p class="page-subtitle">Detailed personal and organizational information for {{ employee.name }}.</p>
+                </div>
+            </div>
+
+            <!-- View Employee Panel -->
+            <div class="card-panel" style="max-width: 900px; margin: 0 auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem; padding-bottom: 0.75rem;">
+                    <h2 style="font-size: 1.25rem; color: #fff; margin: 0;">Personal Details</h2>
+                    <a href="{{ url_for('employee.employees') }}" style="font-size: 0.85rem; color: var(--primary); text-decoration: none;">Back to Manage Employee</a>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label>Employee First Name</label>
+                        <input type="text" class="form-control" value="{{ employee.first_name or '' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                    <div class="form-group">
+                        <label>Employee Middle Name</label>
+                        <input type="text" class="form-control" value="{{ employee.middle_name or '' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label>Employee Last Name</label>
+                        <input type="text" class="form-control" value="{{ employee.last_name or '' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <input type="text" class="form-control" value="{{ employee.gender or '-' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="text" class="form-control" value="{{ dob_str }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="text" class="form-control" value="{{ employee.mobile_number or '-' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label>Alternate Mobile Number</label>
+                        <input type="text" class="form-control" value="{{ employee.alternate_mobile or '-' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                    <div class="form-group">
+                        <label>Email ID</label>
+                        <input type="text" class="form-control" value="{{ employee.email or '' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label>Marital Status</label>
+                        <input type="text" class="form-control" value="{{ employee.marital_status or '-' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                    <div class="form-group">
+                        <label>Blood Group</label>
+                        <input type="text" class="form-control" value="{{ employee.blood_group or '-' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="form-group">
+                        <label>Employee Branch / Depot</label>
+                        <input type="text" class="form-control" value="{{ employee.branch_depot or '-' }}" readonly style="background-color: rgba(255,255,255,0.05); color: #ccc;">
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; display: flex; gap: 1rem;">
+                    <a href="{{ url_for('employee.edit_employee', emp_id=employee.id) }}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Edit Details
+                    </a>
+                    <a href="{{ url_for('employee.employees') }}" class="btn btn-secondary" style="text-decoration: none;">Back to List</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

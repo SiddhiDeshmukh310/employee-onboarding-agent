@@ -139,9 +139,12 @@
                     <table class="custom-table">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Onboarding Details</th>
+                                <th style="width: 50px; text-align: center;">View</th>
+                                <th style="width: 50px; text-align: center;">#</th>
+                                <th>Employee First Name</th>
+                                <th>Employee Contact #</th>
+                                <th>Employee Email ID</th>
+                                <th>Employee Branch / Depot</th>
                                 <th>Status</th>
                                 <th>Progress</th>
                                 <th>Actions</th>
@@ -150,18 +153,28 @@
                         <tbody>
                             {% for emp in employees %}
                             <tr>
+                                <td style="text-align: center;">
+                                    <a href="{{ url_for('employee.view_employee', emp_id=emp.id) }}" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.5rem; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);" title="View Details">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </a>
+                                </td>
+                                <td style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                                    {{ loop.index }}
+                                </td>
                                 <td>
-                                    <div style="font-weight: 600; color: #fff;">{{ emp.name }}</div>
+                                    <div style="font-weight: 600; color: #fff;">{{ emp.first_name }}</div>
+                                </td>
+                                <td>
+                                    <div style="color: var(--text-muted); font-size: 0.85rem;">{{ emp.mobile_number }}</div>
                                 </td>
                                 <td>
                                     <div style="color: var(--text-muted); font-size: 0.85rem;">{{ emp.email }}</div>
                                 </td>
                                 <td>
-                                    <div style="font-size: 0.8rem; line-height: 1.4;">
-                                        <div><strong>Qual:</strong> {{ emp.qualification }}</div>
-                                        <div><strong>DOB:</strong> {{ emp.dob }}</div>
-                                        <div><strong>Loc:</strong> {{ emp.location }}</div>
-                                    </div>
+                                    <div style="color: var(--text-muted); font-size: 0.85rem;">{{ emp.branch_depot }}</div>
                                 </td>
                                 <td>
                                     {% if emp.status == 'Completed' %}

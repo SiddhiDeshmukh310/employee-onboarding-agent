@@ -61,38 +61,112 @@
             </div>
 
             <!-- Edit Form Panel -->
-            <div class="card-panel" style="max-width: 700px;">
+            <div class="card-panel" style="max-width: 900px; margin: 0 auto;">
                 <form method="POST">
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem; padding-bottom: 0.75rem;">
+                        <h2 style="font-size: 1.25rem; color: #fff; margin: 0;">Personal Details</h2>
+                        <a href="{{ url_for('employee.employees') }}" style="font-size: 0.85rem; color: var(--primary); text-decoration: none;">Back to Manage Employee</a>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
                         <div class="form-group">
-                            <label for="name">Employee Name</label>
-                            <input type="text" id="name" name="name" class="form-control" value="{{ employee.name }}" required>
+                            <label for="first_name">Employee First Name <span style="color: var(--primary);">*</span></label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" value="{{ employee.first_name or '' }}" required autocomplete="off">
                         </div>
-
                         <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" class="form-control" value="{{ employee.email }}" required>
+                            <label for="middle_name">Employee Middle Name</label>
+                            <input type="text" id="middle_name" name="middle_name" class="form-control" value="{{ employee.middle_name or '' }}" autocomplete="off">
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-top: 0.5rem;">
-                        <label for="qualification">Qualification</label>
-                        <input type="text" id="qualification" name="qualification" class="form-control" value="{{ employee.qualification or '' }}" placeholder="e.g. B.Tech Computer Science">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                        <div class="form-group">
+                            <label for="last_name">Employee Last Name</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" value="{{ employee.last_name or '' }}" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" class="form-control" style="background-color: var(--card-bg); color: #fff;">
+                                <option value="" disabled>Please Select Gender</option>
+                                <option value="Male" {% if employee.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if employee.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if employee.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 0.5rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
                         <div class="form-group">
                             <label for="dob">Date of Birth</label>
                             <input type="date" id="dob" name="dob" class="form-control" value="{{ dob_str }}">
                         </div>
-
                         <div class="form-group">
-                            <label for="location">Location</label>
-                            <input type="text" id="location" name="location" class="form-control" value="{{ employee.location or '' }}" placeholder="e.g. Noida, Noida Sector 62">
+                            <label for="mobile_number">Mobile Number</label>
+                            <input type="text" id="mobile_number" name="mobile_number" class="form-control" value="{{ employee.mobile_number or '' }}" placeholder="Please Enter Mobile Number" autocomplete="off">
                         </div>
                     </div>
 
-                    <div class="form-actions">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                        <div class="form-group">
+                            <label for="alternate_mobile">Alternate Mobile Number</label>
+                            <input type="text" id="alternate_mobile" name="alternate_mobile" class="form-control" value="{{ employee.alternate_mobile or '' }}" placeholder="Please Enter Alternate Mobile Number" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email ID <span style="color: var(--primary);">*</span></label>
+                            <input type="email" id="email" name="email" class="form-control" value="{{ employee.email or '' }}" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                        <div class="form-group">
+                            <label for="marital_status">Marital Status</label>
+                            <select id="marital_status" name="marital_status" class="form-control" style="background-color: var(--card-bg); color: #fff;">
+                                <option value="" disabled>Please Select Marital Status</option>
+                                <option value="Single" {% if employee.marital_status == 'Single' %}selected{% endif %}>Single</option>
+                                <option value="Married" {% if employee.marital_status == 'Married' %}selected{% endif %}>Married</option>
+                                <option value="Divorced" {% if employee.marital_status == 'Divorced' %}selected{% endif %}>Divorced</option>
+                                <option value="Widow" {% if employee.marital_status == 'Widow' %}selected{% endif %}>Widow</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="blood_group">Blood Group</label>
+                            <select id="blood_group" name="blood_group" class="form-control" style="background-color: var(--card-bg); color: #fff;">
+                                <option value="" disabled>Please Select Blood Group</option>
+                                <option value="A+" {% if employee.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                                <option value="A-" {% if employee.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                                <option value="B+" {% if employee.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                                <option value="B-" {% if employee.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                                <option value="AB+" {% if employee.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                                <option value="AB-" {% if employee.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                                <option value="O+" {% if employee.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                                <option value="O-" {% if employee.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label for="branch_depot">Employee Branch / Depot</label>
+                            <input type="text" id="branch_depot" name="branch_depot" class="form-control" value="{{ employee.branch_depot or '' }}" placeholder="Please Enter Employee Branch/Depot" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem; padding-bottom: 0.5rem; margin-top: 1.5rem;">
+                        <h2 style="font-size: 1.25rem; color: #fff; margin: 0;">Onboarding Information</h2>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="form-group">
+                            <label for="qualification">Qualification</label>
+                            <input type="text" id="qualification" name="qualification" class="form-control" value="{{ employee.qualification or '' }}" placeholder="e.g. B.Tech Computer Science">
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location" class="form-control" value="{{ employee.location or '' }}" placeholder="e.g. Pune, Maharashtra">
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
                         <button type="submit" class="btn btn-primary">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
