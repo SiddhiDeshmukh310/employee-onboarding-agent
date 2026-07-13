@@ -16,16 +16,14 @@ def extract_details(text):
     }
     
     # Split text into sentences/clauses
-    # Split at periods followed by spaces, colons (but not inside times or dates), newlines, or "and"
-    # To avoid splitting dates like 29/9/2003, we split on newlines and common dividers
     clauses = re.split(r'[\n\r\t]+|\s+\band\b\s+|\.\s+', text)
     clauses = [c.strip() for c in clauses if c.strip()]
     
     # 1. Extract Qualification
     for clause in clauses:
-        # Match "completed B.Tech", "qualification is BE", "Qualification: BE", "qualification : BE"
+        # Match "completed B.Tech", "Qualification BE", "qualification: BE"
         q_match = re.search(
-            r"(?:completed|did|have|degree in|graduation in|studied|studied in|qualification is|qualification\s*\:)\s+([a-zA-Z0-9\.\s\-\(\)\/]{2,30})",
+            r"(?:completed|did|have|degree in|graduation in|studied|studied in|qualification is|qualification\s*\:|qualification)\s+([a-zA-Z0-9\.\s\-\(\)\/]{2,30})",
             clause,
             re.IGNORECASE
         )
@@ -45,9 +43,9 @@ def extract_details(text):
 
     # 2. Extract Location
     for clause in clauses:
-        # Match "live in Pune", "located in Noida", "Location: Pune", "location : Pune"
+        # Match "live in Pune", "Location Pune", "location: Pune"
         l_match = re.search(
-            r"(?:live in|located in|based in|from|at|location is|living in|location\s*\:)\s+([a-zA-Z\s]{2,25})",
+            r"(?:live in|located in|based in|from|at|location is|living in|location\s*\:|location)\s+([a-zA-Z\s]{2,25})",
             clause,
             re.IGNORECASE
         )
@@ -57,9 +55,9 @@ def extract_details(text):
 
     # 3. Extract DOB
     for clause in clauses:
-        # Match "DOB is 12 March 2003", "DOB: 29/9/2003", "Date of Birth: ..."
+        # Match "DOB 12 March 2003", "Date of birth 3/10/2004", "DOB: 29/9/2003"
         d_match = re.search(
-            r"(?:dob is|born on|date of birth is|birth date is|birthdate is|dob\s*\:|date of birth\s*\:)\s+([a-zA-Z0-9\s\,\-\/]+)",
+            r"(?:dob is|born on|date of birth is|birth date is|birthdate is|dob:?|date of birth:?|dob\s*\:|date of birth\s*\:|dob|date of birth)\s+([a-zA-Z0-9\s\,\-\/]+)",
             clause,
             re.IGNORECASE
         )
