@@ -34,10 +34,26 @@ app.register_blueprint(employee_bp)
 @app.route("/init_db")
 def init_db_root():
     print("[DB Init] Recreating all database tables...")
+    try:
+        # Disable foreign key checks for MySQL during drop/create
+        db.session.execute(db.text("SET FOREIGN_KEY_CHECKS = 0;"))
+        db.session.commit()
+    except Exception as e:
+        print(f"[DB Init] Non-MySQL database or error setting FK checks: {e}")
+        
     db.drop_all()
     db.create_all()
+    
+    try:
+        # Re-enable foreign key checks
+        db.session.execute(db.text("SET FOREIGN_KEY_CHECKS = 1;"))
+        db.session.commit()
+    except Exception as e:
+        pass
+        
     print("[DB Init] Recreated successfully!")
     return "Database initialized successfully! Go back to <a href='/'>Dashboard</a>."
+
 
 
 def start_email_poller():
