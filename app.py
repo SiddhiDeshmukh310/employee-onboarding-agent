@@ -30,6 +30,16 @@ import time
 
 app.register_blueprint(employee_bp)
 
+@app.route("/init-db")
+@app.route("/init_db")
+def init_db_root():
+    print("[DB Init] Recreating all database tables...")
+    db.drop_all()
+    db.create_all()
+    print("[DB Init] Recreated successfully!")
+    return "Database initialized successfully! Go back to <a href='/'>Dashboard</a>."
+
+
 def start_email_poller():
     # Only start the thread in the main reloader process in debug mode
     if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.debug:
