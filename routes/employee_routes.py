@@ -243,6 +243,19 @@ def simulate_reply(emp_id):
             emp.dob = datetime.strptime(data["dob"], "%Y-%m-%d").date()
         except:
             pass
+    if data.get("gender"):
+        emp.gender = data["gender"]
+    if data.get("mobile_number"):
+        emp.mobile_number = data["mobile_number"]
+    if data.get("alternate_mobile"):
+        emp.alternate_mobile = data["alternate_mobile"]
+    if data.get("marital_status"):
+        emp.marital_status = data["marital_status"]
+    if data.get("blood_group"):
+        emp.blood_group = data["blood_group"]
+    if data.get("branch_depot"):
+        emp.branch_depot = data["branch_depot"]
+
             
     if emp.status == "Pending":
         emp.status = "In Progress"

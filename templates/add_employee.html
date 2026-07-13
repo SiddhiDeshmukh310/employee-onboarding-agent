@@ -70,7 +70,7 @@
 
                 <form method="POST">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem; padding-bottom: 0.75rem;">
-                        <h2 style="font-size: 1.25rem; color: #fff; margin: 0;">Personal Details</h2>
+                        <h2 style="font-size: 1.25rem; color: #fff; margin: 0;">Add New Employee</h2>
                         <a href="{{ url_for('employee.employees') }}" style="font-size: 0.85rem; color: var(--primary); text-decoration: none;">Back to Manage Employee</a>
                     </div>
                     
@@ -85,37 +85,10 @@
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
                         <div class="form-group">
                             <label for="last_name">Employee Last Name</label>
                             <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Please Enter Employee Last Name" autocomplete="off">
-                        </div>
-                        <div class="form-group">
-                            <label for="gender">Gender</label>
-                            <select id="gender" name="gender" class="form-control" style="background-color: var(--card-bg); color: #fff;">
-                                <option value="" disabled selected>Please Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
-                        <div class="form-group">
-                            <label for="dob">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="mobile_number">Mobile Number</label>
-                            <input type="text" id="mobile_number" name="mobile_number" class="form-control" placeholder="Please Enter Mobile Number" autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
-                        <div class="form-group">
-                            <label for="alternate_mobile">Alternate Mobile Number</label>
-                            <input type="text" id="alternate_mobile" name="alternate_mobile" class="form-control" placeholder="Please Enter Alternate Mobile Number" autocomplete="off">
                         </div>
                         <div class="form-group">
                             <label for="email">Email ID <span style="color: var(--primary);">*</span></label>
@@ -123,39 +96,6 @@
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
-                        <div class="form-group">
-                            <label for="marital_status">Marital Status</label>
-                            <select id="marital_status" name="marital_status" class="form-control" style="background-color: var(--card-bg); color: #fff;">
-                                <option value="" disabled selected>Please Select Marital Status</option>
-                                <option value="Single">Single</option>
-                                <option value="Married">Married</option>
-                                <option value="Divorced">Divorced</option>
-                                <option value="Widow">Widow</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="blood_group">Blood Group</label>
-                            <select id="blood_group" name="blood_group" class="form-control" style="background-color: var(--card-bg); color: #fff;">
-                                <option value="" disabled selected>Please Select Blood Group</option>
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
-                                <option value="O+">O+</option>
-                                <option value="O-">O-</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
-                        <div class="form-group">
-                            <label for="branch_depot">Employee Branch / Depot</label>
-                            <input type="text" id="branch_depot" name="branch_depot" class="form-control" placeholder="Please Enter Employee Branch/Depot" autocomplete="off">
-                        </div>
-                    </div>
 
                     <div class="form-actions" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
                         <button type="submit" class="btn btn-primary">

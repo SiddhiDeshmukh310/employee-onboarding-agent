@@ -70,6 +70,31 @@ def poll_and_process_emails():
             except Exception as e:
                 print(f" -> Error parsing Date of Birth '{data['dob']}': {e}")
 
+        if data.get("gender"):
+            emp.gender = data["gender"]
+            print(f" -> Set Gender: {emp.gender}")
+
+        if data.get("mobile_number"):
+            emp.mobile_number = data["mobile_number"]
+            print(f" -> Set Mobile Number: {emp.mobile_number}")
+
+        if data.get("alternate_mobile"):
+            emp.alternate_mobile = data["alternate_mobile"]
+            print(f" -> Set Alternate Mobile: {emp.alternate_mobile}")
+
+        if data.get("marital_status"):
+            emp.marital_status = data["marital_status"]
+            print(f" -> Set Marital Status: {emp.marital_status}")
+
+        if data.get("blood_group"):
+            emp.blood_group = data["blood_group"]
+            print(f" -> Set Blood Group: {emp.blood_group}")
+
+        if data.get("branch_depot"):
+            emp.branch_depot = data["branch_depot"]
+            print(f" -> Set Branch/Depot: {emp.branch_depot}")
+
+
         # Update status to In Progress since we received a reply
         if emp.status == "Pending":
             emp.status = "In Progress"
