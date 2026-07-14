@@ -56,6 +56,12 @@ def extract_employee_info(email_text):
     - qualification
     - dob (Format strictly as YYYY-MM-DD. Extract date of birth if mentioned in any format like '12 March 2003' or '12-03-2003' or 'May 12 1996')
     - location
+    - gender (Male, Female, or Other)
+    - mobile_number
+    - alternate_mobile
+    - marital_status (Single, Married, Divorced, or Widow)
+    - blood_group (A+, A-, B+, B-, AB+, AB-, O+, O-)
+    - branch_depot (Any branch/depot details mentioned, e.g., Bhekarainagar or Central Workshop)
     - employee_question (Any question the employee is asking. If none, write null)
 
     Return ONLY a valid JSON object. Do not wrap in markdown or code blocks.
@@ -65,6 +71,12 @@ def extract_employee_info(email_text):
         "qualification": "BE Computer Engineering",
         "dob": "2003-03-12",
         "location": "Pune",
+        "gender": "Male",
+        "mobile_number": "7970970970",
+        "alternate_mobile": "7090909997",
+        "marital_status": "Married",
+        "blood_group": "A+",
+        "branch_depot": "Bhekarainagar",
         "employee_question": "What documents are required for joining?"
     }}
 
@@ -103,7 +115,10 @@ def extract_employee_info_fallback(email_text):
     dob_str = None
     if details.get("dob"):
         try:
-            dob_str = details["dob"].strftime("%Y-%m-%d")
+            if isinstance(details["dob"], str):
+                dob_str = details["dob"]
+            else:
+                dob_str = details["dob"].strftime("%Y-%m-%d")
         except:
             dob_str = str(details["dob"])
 
@@ -111,8 +126,15 @@ def extract_employee_info_fallback(email_text):
         "qualification": details.get("qualification"),
         "dob": dob_str,
         "location": details.get("location"),
+        "gender": details.get("gender"),
+        "mobile_number": details.get("mobile_number"),
+        "alternate_mobile": details.get("alternate_mobile"),
+        "marital_status": details.get("marital_status"),
+        "blood_group": details.get("blood_group"),
+        "branch_depot": details.get("branch_depot"),
         "employee_question": question
     }
+
 
 def generate_onboarding_response(employee, missing_fields, employee_question):
     if not model:
