@@ -137,13 +137,10 @@ def extract_employee_info_fallback(email_text):
 
 
 def generate_onboarding_response(employee, missing_fields, employee_question):
-    # Fast-path: If onboarding is complete and the candidate has no question, return a clean static welcome email.
     if not missing_fields and not employee_question:
         return f"""Hi {employee.name},
 
-Congratulations! We are pleased to inform you that your onboarding process is now complete. All your details have been successfully submitted and verified.
-
-We look forward to welcoming you to the team! If you have any questions in the meantime, please feel free to reach out.
+Your onboarding completion is done. We look forward to meeting you!
 
 Best regards,
 HR Onboarding Team"""
@@ -205,7 +202,7 @@ def generate_onboarding_response_fallback(employee, missing_fields, employee_que
                 body += f"- {field}\n"
         body += "\nPlease reply directly to this email with these details."
     else:
-        body += "Thank you for providing all the required information! Your onboarding process is now complete. We look forward to welcoming you to the company!"
+        body += "Your onboarding completion is done. We look forward to meeting you!"
         
     body += "\n\nBest regards,\nHR Onboarding Team"
     return body
