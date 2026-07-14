@@ -24,8 +24,7 @@ KNOWLEDGE_BASE = {
     ),
     "location": (
         "Our office address is:\n"
-        "Tech Hub Center, 4th Floor, Block A, Sector 62, Noida, UP - 201301.\n"
-        "The nearest metro station is Sector 62 Metro Station, which is a 5-minute walk from the building."
+        "Kharadi, CargoFL in City Vista."
     )
 }
 

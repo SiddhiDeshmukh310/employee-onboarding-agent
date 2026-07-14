@@ -161,7 +161,7 @@ def generate_onboarding_response(employee, missing_fields, employee_question):
     Rules:
     1. Answer the employee's question accurately using ONLY the provided Predefined Company Knowledge Base. If the question is not answered in the Knowledge Base, reply politely that you will consult with the HR team and get back to them.
     2. If there are missing fields, politely ask the employee to reply with them in the same thread. Specifically, if Date of Birth is missing, ask for it in the format: DD/MM/YYYY.
-    3. If all fields are complete (no missing fields), congratulate the employee and confirm that their onboarding is complete.
+    3. If all fields are complete (no missing fields), congratulate the employee and confirm that their onboarding is complete. Do NOT proactively provide information from the knowledge base (like dress code or office address) unless the employee specifically asked a question about it.
     4. Sign off professionally as the HR Onboarding Team.
     """
 
