@@ -137,6 +137,17 @@ def extract_employee_info_fallback(email_text):
 
 
 def generate_onboarding_response(employee, missing_fields, employee_question):
+    # Fast-path: If onboarding is complete and the candidate has no question, return a clean static welcome email.
+    if not missing_fields and not employee_question:
+        return f"""Hi {employee.name},
+
+Congratulations! We are pleased to inform you that your onboarding process is now complete. All your details have been successfully submitted and verified.
+
+We look forward to welcoming you to the team! If you have any questions in the meantime, please feel free to reach out.
+
+Best regards,
+HR Onboarding Team"""
+
     if not model:
         print("[AI Agent] No Gemini API key configured. Using local fallback response generation.")
         return generate_onboarding_response_fallback(employee, missing_fields, employee_question)
