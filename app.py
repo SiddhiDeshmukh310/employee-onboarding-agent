@@ -62,6 +62,62 @@ def init_db_root():
     except Exception as e:
         return f"<pre>Error Recreating Database:\n{traceback.format_exc()}</pre>", 500
 
+@app.route("/test-db")
+@app.route("/test_db")
+def test_db_pymysql():
+    import pymysql
+    import os
+    import traceback
+    
+    host = os.getenv('DB_HOST', 'localhost')
+    port = os.getenv('DB_PORT')
+    if port and ':' not in host:
+        host = f"{host}:{port}"
+        
+    user = os.getenv('DB_USER')
+    password = os.getenv('DB_PASSWORD')
+    db_name = os.getenv('DB_NAME')
+    
+    html = f"""
+    <h3>Direct PyMySQL Connection Diagnostic</h3>
+    <p><strong>DB_HOST:</strong> {host}</p>
+    <p><strong>DB_USER:</strong> {user}</p>
+    <p><strong>DB_NAME:</strong> {db_name}</p>
+    <p><strong>DB_PASSWORD configured:</strong> {'YES (Length: ' + str(len(password)) + ')' if password else 'NO'}</p>
+    """
+    
+    try:
+        ssl_args = None
+        if 'localhost' not in host and '127.0.0.1' not in host:
+            ssl_args = {"ssl_mode": "REQUIRED"}
+            
+        host_only = host
+        port_num = 3306
+        if ':' in host:
+            parts = host.split(':')
+            host_only = parts[0]
+            port_num = int(parts[1])
+            
+        conn = pymysql.connect(
+            host=host_only,
+            port=port_num,
+            user=user,
+            password=password,
+            database=db_name,
+            ssl=ssl_args,
+            connect_timeout=4
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT VERSION()")
+        version = cursor.fetchone()
+        conn.close()
+        html += f"<p style='color:green;'><strong>SUCCESS!</strong> MySQL Version: {version[0]}</p>"
+    except Exception as e:
+        html += f"<p style='color:red;'><strong>FAILED!</strong> Connection Traceback:</p><pre>{traceback.format_exc()}</pre>"
+        
+    return html
+
+
 
 
 
