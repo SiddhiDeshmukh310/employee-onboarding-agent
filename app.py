@@ -22,7 +22,11 @@ db.init_app(app)
 from models.employee import Employee
 
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"[Startup] Warning: db.create_all failed: {e}")
+
 
 import os
 import threading
