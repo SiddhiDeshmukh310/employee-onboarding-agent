@@ -13,48 +13,53 @@ employee_bp = Blueprint('employee', __name__)
 @employee_bp.route("/")
 @employee_bp.route("/employees")
 def employees():
-    all_employees = Employee.query.all()
-    
-    # Calculate stats
-    total = len(all_employees)
-    completed = len([e for e in all_employees if e.status == "Completed"])
-    in_progress = len([e for e in all_employees if e.status == "In Progress"])
-    pending = len([e for e in all_employees if e.status == "Pending"])
-    
-    # Enrich employees with progress percentage and missing fields list
-    enriched = []
-    for emp in all_employees:
-        missing = get_missing_fields(emp)
-        # Total fields: Name, Qualification, DOB, Location
-        # Name is mandatory at entry, so 1/4 fields is 25% complete.
-        filled_count = 4 - len(missing)
-        pct = int((filled_count / 4.0) * 100)
+    import traceback
+    try:
+        all_employees = Employee.query.all()
         
-        enriched.append({
-            "id": emp.id,
-            "name": emp.name,
-            "first_name": emp.first_name or emp.name,
-            "email": emp.email,
-            "mobile_number": emp.mobile_number or "-",
-            "branch_depot": emp.branch_depot or "-",
-            "qualification": emp.qualification or "-",
-            "dob": emp.dob.strftime("%Y-%m-%d") if emp.dob else "-",
-            "location": emp.location or "-",
-            "status": emp.status,
-            "progress": pct,
-            "missing": ", ".join(missing) if missing else "None"
-        })
+        # Calculate stats
+        total = len(all_employees)
+        completed = len([e for e in all_employees if e.status == "Completed"])
+        in_progress = len([e for e in all_employees if e.status == "In Progress"])
+        pending = len([e for e in all_employees if e.status == "Pending"])
         
-    return render_template(
-        "employees.html",
-        employees=enriched,
-        stats={
-            "total": total,
-            "completed": completed,
-            "in_progress": in_progress,
-            "pending": pending
-        }
-    )
+        # Enrich employees with progress percentage and missing fields list
+        enriched = []
+        for emp in all_employees:
+            missing = get_missing_fields(emp)
+            # Total fields: Name, Qualification, DOB, Location
+            # Name is mandatory at entry, so 1/4 fields is 25% complete.
+            filled_count = 4 - len(missing)
+            pct = int((filled_count / 4.0) * 100)
+            
+            enriched.append({
+                "id": emp.id,
+                "name": emp.name,
+                "first_name": emp.first_name or emp.name,
+                "email": emp.email,
+                "mobile_number": emp.mobile_number or "-",
+                "branch_depot": emp.branch_depot or "-",
+                "qualification": emp.qualification or "-",
+                "dob": emp.dob.strftime("%Y-%m-%d") if emp.dob else "-",
+                "location": emp.location or "-",
+                "status": emp.status,
+                "progress": pct,
+                "missing": ", ".join(missing) if missing else "None"
+            })
+            
+        return render_template(
+            "employees.html",
+            employees=enriched,
+            stats={
+                "total": total,
+                "completed": completed,
+                "in_progress": in_progress,
+                "pending": pending
+            }
+        )
+    except Exception as e:
+        return f"<pre>Error Loading Dashboard:\n{traceback.format_exc()}</pre>", 500
+
 
 @employee_bp.route("/add", methods=["GET", "POST"])
 def add_employee():

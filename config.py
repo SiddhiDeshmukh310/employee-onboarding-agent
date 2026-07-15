@@ -24,6 +24,13 @@ class Config:
             "connect_args": {
                 "ssl": {
                     "ssl_mode": "REQUIRED"
-                }
+                },
+                "connect_timeout": 4
+            }
+        }
+    else:
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "connect_args": {
+                "connect_timeout": 4
             }
         }
